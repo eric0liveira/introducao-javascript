@@ -5,13 +5,33 @@ botaoAdicionar.addEventListener("click", function(event){
     var form = document.querySelector("#form-adiciona");
     var paciente = obtemPacienteDoFormulario(form);
 
+    var erros = validaPaciente(paciente);
+    
+    if( !erros.valida ){
+        exibeMensagemDeErro(erros.mensagem);
+        return;
+    }
+        
+
     var pacienteTr = montaTr(paciente);
 
     var tabela = document.querySelector("#tabela-pacientes");
     tabela.appendChild(pacienteTr);
 
     form.reset();
+    let ul = document.querySelector("#mensagem-erro");
+    ul.innerHTML = "";
 });
+
+function exibeMensagemDeErro(erros) {
+    let ul = document.querySelector("#mensagem-erro");
+    ul.innerHTML = "";
+    erros.forEach(erro => {
+        let li = document.createElement("li");
+        li.textContent = erro;
+        ul.appendChild(li);
+    });
+}
 
 function obtemPacienteDoFormulario(form) {
     let paciente = {
@@ -44,4 +64,24 @@ function montaTd(valor, classe) {
     td.classList.add(classe);
 
     return td;
+}
+
+function validaPaciente(paciente) {
+    let erro = [];
+    let retorno = {};
+
+    retorno.valida = true;
+
+    if(!validaPeso(paciente.peso)) {
+        erro.push("Peso inválido");
+        retorno.valida = false;
+    }
+    if (!validaAltura(paciente.altura)) {
+        erro.push("Altura inválida");
+        retorno.valida = false;
+    }
+
+    retorno.mensagem = erro;
+
+    return retorno;
 }
